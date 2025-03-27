@@ -14,7 +14,7 @@ class CategoryController extends Controller
     {
         //
         $categories = Category::all();
-        return view("categories.index", compact("categories"));
+        return view('categories.index', compact('categories'));
     }
 
     /**
@@ -23,6 +23,7 @@ class CategoryController extends Controller
     public function create()
     {
         //
+        return view('categories.create');
     }
 
     /**
@@ -31,6 +32,11 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         //
+        $validateddata = $request->validate([
+            'category_name' => 'required|max:255',
+            'category_slug' => 'required|max:255',
+            'category_desc' => 'required|max:255'
+        ]);
     }
 
     /**

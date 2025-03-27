@@ -25,7 +25,10 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::with('author','category','tags')
+        // $tags=Tag::all();
+        // $categories=Category::all();
+
+        $posts = Post::with('author','categories','tags')
             ->published()
             ->latest('published_at')
             ->paginate(10);
