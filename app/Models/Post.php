@@ -4,8 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
+
 
 class Post extends Model
 {
@@ -18,7 +20,8 @@ class Post extends Model
         'content',
         'user_id',
         'is_published',
-        'published_at'
+        'published_at',
+        'category_id'
     ];
 
     protected $casts = [
@@ -33,9 +36,20 @@ class Post extends Model
         $this->attributes['slug'] = strtolower(Str::slug($value));
     }
 
+    //Establish relationship sang author, tags kag categories
     public function author() : BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+    
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(Tag::class, 'post_tags');
+    }
+
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class, 'category_posts');
     }
 
     // Scope sa published posts

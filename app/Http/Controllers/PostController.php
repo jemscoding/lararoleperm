@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Storage;
 use App\Models\Post;
+use App\Models\Tag;
+Use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -23,7 +25,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::with('author')
+        $posts = Post::with('author','category','tags')
             ->published()
             ->latest('published_at')
             ->paginate(10);
@@ -36,7 +38,9 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('posts.create');
+        $categories = Category::all();
+        $tags = Tag::all();
+        return view('posts.create', compact('categories','tags'));
     }
 
     /**
@@ -98,8 +102,8 @@ class PostController extends Controller
         if (!$post->is_published && $post->user_id !== Auth::id()) {
             abort(403);
         }
-
-        return view('posts.show', compact('post'));
+        $post->load(['category','tags']);
+        return view('posts.show', compact('post','category','tags'));
     }
 
     /**
@@ -165,7 +169,7 @@ class PostController extends Controller
             'title' => Str::headline($validatedData['title']),
             'content' => $sanitizedContent,
             'ft_image' => $imagePath,
-            'is_published' => $validatedData['is_published'] ?? false
+            'is_published' => $validatedData['is_published'] ?? false,
         ]);
 
         // Set or update published at
