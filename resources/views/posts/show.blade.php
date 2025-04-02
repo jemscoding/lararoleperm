@@ -44,6 +44,22 @@
                                 <strong>Author:</strong> {{ $post->author->name }}
                                 <br>
                                 <strong>Published:</strong> {{ $post->published_at ? $post->published_at->format('M d, Y') : 'Not published' }}
+                                <br>
+                                <strong>Categories:</strong>
+                                @foreach($post->categories as $category)
+                                <span class="inline-block px-2 py-1 text-xs text-gray-800 bg-gray-100 rounded">
+                                    {{ $category->category_name }}
+                                </span>
+
+                                @endforeach
+                                <br>
+                                <strong>Tags:</strong>
+                                @foreach($post->tags as $tag)
+                                    <span class="inline-block px-2 py-1 text-xs text-gray-800 bg-gray-100 rounded">
+                                        {{ $tag->tag_name }}
+                                    </span>
+                                     &nbsp;
+                                @endforeach
                             </div>
                         </div>
                     </div>

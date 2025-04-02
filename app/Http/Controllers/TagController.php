@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Tag;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class TagController extends Controller
 {
@@ -12,7 +14,8 @@ class TagController extends Controller
      */
     public function index()
     {
-        //
+        $tags = Tag::all();
+        return view('tags.index', compact('tags'));
     }
 
     /**
@@ -20,7 +23,7 @@ class TagController extends Controller
      */
     public function create()
     {
-        //
+        return view('tags.create');
     }
 
     /**
@@ -29,6 +32,23 @@ class TagController extends Controller
     public function store(Request $request)
     {
         //
+        $validatedData = $request->validate([
+            'tag_name' => 'required|max:255|unique:tags',
+            'tag_desc' => 'max:255'
+        ]);
+
+        //generates the updated slug using the Str class
+        $slug = Str::slug($validatedData['tag_name']);
+
+        //adding the new slug to the validated data value
+        $validatedData['tag_slug'] = $slug;
+
+        // dd($validatedData); // Debugging line
+
+        $tag = Tag::create($validatedData);
+
+        return redirect()->route('tags.index')
+            ->with('success', 'Tag created successfully.');
     }
 
     /**
@@ -36,7 +56,8 @@ class TagController extends Controller
      */
     public function show(Tag $tag)
     {
-        //
+        $tag = Tag::find($tag->id);
+        return view('tags.show', compact('tag'));
     }
 
     /**
@@ -44,7 +65,7 @@ class TagController extends Controller
      */
     public function edit(Tag $tag)
     {
-        //
+        return view('tags.edit', compact('tag'));
     }
 
     /**
@@ -52,7 +73,22 @@ class TagController extends Controller
      */
     public function update(Request $request, Tag $tag)
     {
-        //
+        $validatedData = $request->validate([
+            'tag_name' => ['required','max:255',
+            Rule::unique('tags')->ignore($tag->id),
+        ],  'tag_desc' => 'max:255'
+        ]);
+
+        //generates the updated slug using the Str class
+        $slug = Str::slug($validatedData['tag_name']);
+
+        //adding the new slug to the validated data value
+        $validatedData['tag_slug'] = $slug;
+
+        $tag->update($validatedData);
+
+        return redirect()->route('tags.index')
+            ->with('success', 'Tag created successfully.');
     }
 
     /**
@@ -60,6 +96,9 @@ class TagController extends Controller
      */
     public function destroy(Tag $tag)
     {
-        //
+        $tag = Tag::find($tag->id);
+        $tag->delete();
+        return redirect()->route('tags.index')
+            ->with('success', 'Tag deleted successfully.');
     }
 }

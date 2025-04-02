@@ -2,10 +2,10 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                {{ __('Blog Categories') }}
+                {{ __('Blog Tags') }}
             </h2>
-            <a href="{{ route('categories.create') }}" class="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600">
-                {{ __('Create New Categories') }}
+            <a href="{{ route('tags.create') }}" class="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600">
+                {{ __('Create New Tags') }}
             </a>
         </div>
     </x-slot>
@@ -20,7 +20,7 @@
 
             <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    @if($categories->count() > 0)
+                    @if($tags->count() > 0)
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
@@ -37,33 +37,33 @@
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
-                                    @foreach($categories as $category)
+                                    @foreach($tags as $tag)
                                         <tr>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="flex items-center">
-                                                    <a href="{{ route('categories.show', $category) }}" class="text-sm font-medium text-gray-900 hover:text-blue-600">
-                                                        {{ Str::limit($category->category_name, 50) }}
+                                                    <a href="{{ route('tags.show', $tag) }}" class="text-sm font-medium text-gray-900 hover:text-blue-600">
+                                                        {{ Str::limit($tag->tag_name, 50) }}
                                                     </a>
                                                 </div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <span class="inline-block px-2 py-1 mb-1 mr-1 text-xs bg-indigo-100 rounded-full text-neutral-800">
-                                                    {{ $category->category_slug }}
+                                                    {{ $tag->tag_slug }}
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
                                                     <div class="flex justify-end space-x-2">
-                                                        <a href="{{ route('categories.show', $category) }}"
+                                                        <a href="{{ route('tags.show', $tag) }}"
                                                            class="text-blue-500 hover:text-blue-700">
                                                             View
                                                         </a>
-                                                        <a href="{{ route('categories.edit', $category) }}"
+                                                        <a href="{{ route('tags.edit', $tag) }}"
                                                            class="text-yellow-500 hover:text-yellow-700">
                                                             Edit
                                                         </a>
-                                                        <form action="{{ route('categories.destroy', $category) }}"
+                                                        <form action="{{ route('tags.destroy', $tag) }}"
                                                               method="POST"
-                                                              onsubmit="return confirm('Are you sure you want to delete this category?');"
+                                                              onsubmit="return confirm('Are you sure you want to delete this tag?');"
                                                               class="inline">
                                                             @csrf
                                                             @method('DELETE')
@@ -80,7 +80,7 @@
                             </table>
                         </div>
                     @else
-                        <p class="text-center text-gray-500">No category found.</p>
+                        <p class="text-center text-gray-500">No tag found.</p>
                     @endif
                 </div>
             </div>

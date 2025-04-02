@@ -28,6 +28,14 @@
                         {{ __('Permissions') }}
                     </x-nav-link>
 
+                    <x-nav-link :href="route('categories.index')" :active="request()->routeIs('permissions.*')">
+                        {{ __('Categories') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('tags.index')" :active="request()->routeIs('permissions.*')">
+                        {{ __('Tags') }}
+                    </x-nav-link>
+
                 </div>
             </div>
 

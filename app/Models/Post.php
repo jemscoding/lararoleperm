@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\hasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
 
@@ -21,7 +20,9 @@ class Post extends Model
         'content',
         'user_id',
         'is_published',
-        'published_at'
+        'published_at',
+        'categories',
+        'tags'
     ];
 
     protected $casts = [
@@ -41,16 +42,15 @@ class Post extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
-    
+
     public function categories(): BelongsToMany
     {
-        return $this->BelongsToMany(Category::class, 'category_posts');
+        return $this->belongsToMany(Category::class, 'category_posts', 'post_id', 'category_id');
     }
-
 
     public function tags(): BelongsToMany
     {
-        return $this->BelongsToMany(Tag::class, 'post_tags');
+        return $this->belongsToMany(Tag::class, 'post_tags', 'post_id', 'tag_id');
     }
 
     // Scope sa published posts

@@ -50,6 +50,59 @@
                             </label>
                         </div>
 
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-gray-700">
+                                Categories
+                            </label>
+                            <div class="grid grid-cols-3 gap-4">
+                                @foreach($categories as $category)
+                                <div class="flex items-center mb-3">
+                                    <input
+                                        type="checkbox"
+                                        name="categories[]"
+                                        value="{{ $category->id }}"
+                                        id="category-{{ $category->id }}"
+                                        class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                                        {{ in_array($category->id, old('categories', $post->categories->pluck('id')->toArray())) ? 'checked' : '' }}
+                                    >
+                                    <label
+                                        for="category-{{ $category->id }}"
+                                        class="block ml-2 text-sm text-gray-900"
+                                    >
+                                        {{ $category->category_name }}
+                                    </label>
+                                </div>
+                            @endforeach
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-gray-700">
+                                Tags
+                            </label>
+                            <div class="grid grid-cols-3 gap-4">
+                                @foreach($tags as $tag)
+                                <div class="flex items-center mb-3">
+                                    <input
+                                        type="checkbox"
+                                        name="tags[]"
+                                        value="{{ $tag->id }}"
+                                        id="tag-{{ $tag->id }}"
+                                        class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                                        {{ in_array($tag->id, old('tags', $post->tags->pluck('id')->toArray())) ? 'checked' : '' }}
+                                    >
+                                    <label
+                                        for="tag-{{ $tag->id }}"
+                                        class="block ml-2 text-sm text-gray-900"
+                                    >
+                                        {{ $tag->tag_name }}
+                                    </label>
+                                </div>
+                            @endforeach
+                            </div>
+                        </div>
+
+
                         <div class="flex items-center gap-4">
                             <x-primary-button>{{ __('Update Post') }}</x-primary-button>
 

@@ -8,12 +8,15 @@ use App\Models\Tag;
 Use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 
+
 class PostController extends Controller
 {
+    use AuthorizesRequests;
     // public function __construct()
     // {
     //     // Apply policies to methods
@@ -25,8 +28,6 @@ class PostController extends Controller
      */
     public function index()
     {
-        // $tags=Tag::all();
-        // $categories=Category::all();
 
         $posts = Post::with('author','categories','tags')
             ->published()
@@ -55,14 +56,16 @@ class PostController extends Controller
             'is_published' => $request->has('is_published') ? 1 : 0
         ]);
 
-         // Sanitize and validate input
-         $validatedData = $request->validate([
-            'title' => 'required|max:255|unique:posts,title',
-            'content' => 'required|max:65535',
-            'ft_image' => 'nullable|max:2048|image|mimes:jpeg,png,jpg',
-            'is_published' => 'boolean'
-
-        ]);
+            $validatedData = $request->validate([
+                'title' => 'required|max:255|unique:posts,title',
+                'content' => 'required|max:65535',
+                'ft_image' => 'nullable|max:2048|image|mimes:jpeg,png,jpg',
+                'is_published' => 'boolean',
+                'categories' => 'array',
+                'categories.*' => 'exists:categories,id',
+                'tags' => 'array',
+                'tags.*' => 'exists:tags,id',
+            ]);
 
         // Sanitize content
         $sanitizedContent = strip_tags($validatedData['content'], '<p><a><strong><em><h1><h2><h3><h4><h5><h6><ul><ol><li>');
@@ -92,6 +95,14 @@ class PostController extends Controller
 
         $post->save();
 
+        // See if post has categories and tags
+        if ($request->has('categories')) {
+            $post->categories()->attach($request->categories);
+        }
+        if ($request->has('tags')) {
+            $post->tags()->attach($request->tags);
+        }
+
         return redirect()->route('posts.index')
             ->with('success', 'Post created successfully.');
     }
@@ -105,8 +116,11 @@ class PostController extends Controller
         if (!$post->is_published && $post->user_id !== Auth::id()) {
             abort(403);
         }
-        $post->load(['category','tags']);
-        return view('posts.show', compact('post','category','tags'));
+
+        $categories = Category::all();
+        $tags = Tag::all();
+        $post = Post::where('id', $post->id)->with(['categories', 'tags'])->firstOrFail();
+        return view('posts.show', compact('post','categories','tags'));
     }
 
     /**
@@ -114,8 +128,10 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-
-         return view('posts.edit', compact('post'));
+        $post = Post::find($post->id);
+        $tags = Tag::all();
+        $categories = Category::all();
+        return view('posts.edit', compact('categories','tags','post'));
     }
 
     /**
@@ -147,7 +163,12 @@ class PostController extends Controller
                 'mimes:jpeg,png,jpg,gif',
                 'max:2048'
             ],
-            'is_published' => 'boolean'
+            'is_published' => 'boolean',
+            'categories' => 'array',
+            'categories.*' => 'exists:categories,id',
+            'tags' => 'array',
+            'tags.*' => 'exists:tags,id'
+
         ]);
 
         // Sanitize content
@@ -178,6 +199,16 @@ class PostController extends Controller
         // Set or update published at
         if ($post->is_published && !$post->published_at) {
             $post->published_at = now()->toDateString();
+        }
+
+        //see if post has tags
+        if ($request->has('tags')) {
+            $post->tags()->sync($request->tags);
+        }
+
+        //see if post has categories
+        if ($request->has('categories')) {
+            $post->categories()->sync($request->categories);
         }
 
         $post->save();

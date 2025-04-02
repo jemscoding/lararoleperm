@@ -32,6 +32,12 @@
                                             Author
                                         </th>
                                         <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                            Categories
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                            Tags
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                                             Published Date
                                         </th>
                                         <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
@@ -62,6 +68,20 @@
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="text-sm text-gray-900">{{ $post->author->name }}</div>
                                             </td>
+                                            <td class="px-6 py-4">
+                                                @foreach ($post->categories as $category)
+                                                    <span class="inline-block px-2 py-1 mb-1 mr-1 text-xs bg-blue-100 rounded-full text-blue-800">
+                                                        {{ $category->category_name }}
+                                                    </span>
+                                                @endforeach
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                @foreach ($post->tags as $tag)
+                                                    <span class="inline-block px-2 py-1 mb-1 mr-1 text-xs bg-indigo-100 rounded-full text-neutral-800">
+                                                        {{ $tag->tag_name }}
+                                                    </span>
+                                                @endforeach
+                                            </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="text-sm text-gray-500">
                                                     {{ $post->published_at ? $post->published_at->format('M d, Y') : 'Not Published' }}
@@ -69,7 +89,7 @@
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                    {{ $post->is_published ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
+                                                            {{ $post->is_published ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
                                                     {{ $post->is_published ? 'Published' : 'Draft' }}
                                                 </span>
                                             </td>
@@ -86,7 +106,7 @@
                                                         </a>
                                                         <form action="{{ route('posts.destroy', $post) }}"
                                                               method="POST"
-                                                              onsubmit="return confirm('Are you sure?');"
+                                                              onsubmit="return confirm('Are you sure you want to delete this post?');"
                                                               class="inline">
                                                             @csrf
                                                             @method('DELETE')

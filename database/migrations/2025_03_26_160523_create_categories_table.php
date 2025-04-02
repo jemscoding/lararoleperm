@@ -15,10 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('category_name');
             $table->string('category_slug')->unique();
-            $table->string('category_desc');
             $table->timestamps();
         });
-        
+
     }
 
     /**
