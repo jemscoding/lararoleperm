@@ -36,3 +36,11 @@ require __DIR__.'/auth.php';
 
 Route::resource('/categories', CategoryController::class)->names('categories');
 Route::resource('/tags', TagController::class)->names('tags');
+
+//route with authentication with a specific role admin, super_admin and editor can access using middleware
+Route::group(['middleware' =>['auth','role:admin|super_admin|editor']], function ()
+{
+    Route::resource('posts', PostController::class)->names('posts');
+    Route::resource('roles', RoleController::class)->names('roles');
+    Route::resource('permissions', PermissionController::class)->names('permissions');
+});

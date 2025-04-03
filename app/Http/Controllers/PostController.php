@@ -15,7 +15,7 @@ use Illuminate\Http\RedirectResponse;
 
 
 class PostController extends Controller
-{
+{   
     use AuthorizesRequests;
     // public function __construct()
     // {
