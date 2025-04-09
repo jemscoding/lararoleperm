@@ -15,94 +15,54 @@ class RolePermissionSeeder extends Seeder
      */
     public function run(): void
     {
-          // Reset cached roles and permissions
+        // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // User Management Permissions
-        Permission::create(['name' => 'view users']);
-        Permission::create(['name' => 'create users']);
-        Permission::create(['name' => 'edit users']);
-        Permission::create(['name' => 'delete users']);
+        // Define standard actions
+        $actions = ['view', 'view any', 'create', 'update', 'delete', 'restore', 'force delete'];
 
-        // Blog Post Permissions
-        Permission::create(['name' => 'create posts']);
-        Permission::create(['name' => 'edit own posts']);
-        Permission::create(['name' => 'edit all posts']);
-        Permission::create(['name' => 'delete own posts']);
-        Permission::create(['name' => 'delete all posts']);
-        Permission::create(['name' => 'publish posts']);
+        // Define models
+        $models = ['users', 'posts', 'comments'];
 
-        // Blog Comment Permissions
-        Permission::create(['name' => 'create comments']);
-        Permission::create(['name' => 'edit own comments']);
-        Permission::create(['name' => 'edit all comments']);
-        Permission::create(['name' => 'delete own comments']);
-        Permission::create(['name' => 'delete all comments']);
+        // Generate permissions dynamically
+        foreach ($models as $model) {
+            foreach ($actions as $action) {
+                Permission::create(['name' => "{$action} {$model}"]);
+           }
+       }
 
-        // Create Roles
-        $adminRole = Role::create(['name' => 'admin']);
-        $managerRole = Role::create(['name' => 'manager']);
-        $userRole = Role::create(['name' => 'user']);
+       // Create Roles
+       $adminRole = Role::create(['name' => 'admin']);
+       $managerRole = Role::create(['name' => 'manager']);
+       $editorRole = Role::create(['name' => 'editor']);
+       $authorRole = Role::create(['name' => 'author']);
+       $contributorRole = Role::create(['name' => 'contributor']);
 
-        // Blog Roles
-        $editorRole = Role::create(['name' => 'editor']);
-        $authorRole = Role::create(['name' => 'author']);
-        $contributorRole = Role::create(['name' => 'contributor']);
+       // Assign permissions to roles
+       $adminRole->givePermissionTo(Permission::all()); // Admin gets all permissions
 
-        // Assign Permissions to Roles
-        $adminRole->givePermissionTo([
-            'view users',
-            'create users',
-            'edit users',
-            'delete users',
-            'create posts',
-            'edit all posts',
-            'delete all posts',
-            'publish posts',
-            'create comments',
-            'edit all comments',
-            'delete all comments'
-        ]);
+       $managerRole->givePermissionTo([
+        'view any users', 'view users', 'create users', 'update users',
+        'view any posts', 'view posts', 'create posts', 'update posts', 'delete posts',
+        'view any comments', 'view comments', 'create comments', 'update comments'
+    ]);
 
-        $managerRole->givePermissionTo([
-            'view users',
-            'create users',
-            'edit users',
-            'create posts',
-            'edit all posts',
-            'publish posts',
-            'create comments'
-        ]);
+    $editorRole->givePermissionTo([
+        'view any posts', 'view posts', 'create posts', 'update posts', 'delete posts',
+        'view any comments', 'view comments', 'update comments'
+    ]);
+    $contributorRole->givePermissionTo([
+        'view any posts', 'view posts', 'create posts',
+        'view any comments', 'view comments', 'create comments', 'update comments'
+    ]);
 
-        $editorRole->givePermissionTo([
-            'create posts',
-            'edit all posts',
-            'publish posts',
-            'create comments',
-            'edit all comments'
-        ]);
+    // Create an admin user
+    $adminUser = User::create([
+        'name' => 'aki',
+        'email' => 'admin@gmail.com',
+        'password' => bcrypt('qwerty12345')
+    ]);
+    $adminUser->assignRole($adminRole);
 
-        $authorRole->givePermissionTo([
-            'create posts',
-            'edit own posts',
-            'delete own posts',
-            'create comments',
-            'edit own comments',
-            'delete own comments'
-        ]);
-
-        $contributorRole->givePermissionTo([
-            'create posts',
-            'create comments',
-            'edit own comments'
-        ]);
-
-        // Create an admin user
-        $adminUser = User::create([
-            'name' => 'Admin User',
-            'email' => 'admin@gmail.com',
-            'password' => bcrypt('qwerty12345')
-        ]);
-        $adminUser->assignRole($adminRole);
     }
 }

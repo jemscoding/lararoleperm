@@ -1,12 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
+        @if (auth()->user()->hasRole(['admin', 'super_admin', 'editor']))
         <div class="flex items-center justify-between">
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
                 {{ __('Blog Posts') }}
             </h2>
+            @can('create posts')
             <a href="{{ route('posts.create') }}" class="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600">
                 {{ __('Create New Post') }}
             </a>
+            @endcan
         </div>
     </x-slot>
 
@@ -96,14 +99,19 @@
                                             <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
                                                 @if(auth()->id() == $post->user_id)
                                                     <div class="flex justify-end space-x-2">
-                                                        <a href="{{ route('posts.show', $post) }}"
+                                                        @can('view', $post)
+                                                        <a href="{{ route('posts.show', $post->slug) }}"
                                                            class="text-blue-500 hover:text-blue-700">
                                                             View
                                                         </a>
-                                                        <a href="{{ route('posts.edit', $post) }}"
+                                                        @endcan
+                                                        @can('update posts', $post)
+                                                        <a href="{{ route('posts.edit', $post->slug) }}"
                                                            class="text-yellow-500 hover:text-yellow-700">
                                                             Edit
                                                         </a>
+                                                        @endcan
+                                                        @can('delete posts', $post)
                                                         <form action="{{ route('posts.destroy', $post) }}"
                                                               method="POST"
                                                               onsubmit="return confirm('Are you sure you want to delete this post?');"
@@ -115,6 +123,7 @@
                                                                 Delete
                                                             </button>
                                                         </form>
+                                                        @endcan
                                                     </div>
                                                 @endif
                                             </td>
@@ -134,4 +143,5 @@
             </div>
         </div>
     </div>
+    @endif
 </x-app-layout>

@@ -1,9 +1,9 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h1 class="text-3xl font-bold text-gray-900">Categories Management</h1>
-            <a href="{{ route('categories.create') }}" class="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600">
-                {{ __('Create New Categories') }}
+        <div class="flex items-center justify-between mt-6">
+            <h1 class="text-3xl font-bold text-gray-900">Users Management</h1>
+            <a href="{{ route('users.create') }}" class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                Create New User
             </a>
         </div>
     </x-slot>
@@ -18,7 +18,7 @@
 
             <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    @if($categories->count() > 0)
+                    @if($users->count() > 0)
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
@@ -27,7 +27,10 @@
                                             Name
                                         </th>
                                         <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                                            Slug
+                                            Email
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                            Roles
                                         </th>
                                         <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase">
                                             Actions
@@ -35,42 +38,44 @@
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
-                                    @foreach($categories as $category)
+                                    @foreach($users as $user)
                                         <tr>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="flex items-center">
-                                                    <a href="{{ route('categories.show', $category) }}" class="text-sm font-medium text-gray-900 hover:text-blue-600">
-                                                        {{ Str::limit($category->category_name, 50) }}
+                                                    <a href="{{ route('users.show', $user) }}" class="text-sm font-medium text-gray-900 hover:text-blue-600">
+                                                        {{ Str::limit($user->name, 50) }}
                                                     </a>
                                                 </div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
-                                                <span class="inline-block px-2 py-1 mb-1 mr-1 text-xs bg-indigo-100 rounded-full text-neutral-800">
-                                                    {{ $category->category_slug }}
-                                                </span>
+                                                <div class="text-sm text-gray-900">{{ $user->email }}</div>
+                                            </td>
+                                            <td class="px-6 py-4">
+
+                                                @foreach ($user->roles as $role)
+                                                    <span class="inline-block px-2 py-1 mb-1 mr-1 text-xs bg-blue-100 rounded-full text-blue-800">
+                                                        {{ $role->name }}
+                                                    </span>
+                                                @endforeach
                                             </td>
                                             <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                                                @if(auth()->id() == $user->id || auth()->user()->hasRole('admin'))
                                                     <div class="flex justify-end space-x-2">
-                                                        <a href="{{ route('categories.show', $category) }}"
-                                                           class="text-blue-500 hover:text-blue-700">
+                                                        <a href="{{ route('users.show', $user) }}" class="text-blue-500 hover:text-blue-700">
                                                             View
                                                         </a>
-                                                        <a href="{{ route('categories.edit', $category) }}"
-                                                           class="text-yellow-500 hover:text-yellow-700">
+                                                        <a href="{{ route('users.edit', $user) }}" class="text-yellow-500 hover:text-yellow-700">
                                                             Edit
                                                         </a>
-                                                        <form action="{{ route('categories.destroy', $category) }}"
-                                                              method="POST"
-                                                              onsubmit="return confirm('Are you sure you want to delete this category?');"
-                                                              class="inline">
+                                                        <form action="{{ route('users.destroy', $user) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?');" class="inline">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="submit"
-                                                                    class="text-red-500 hover:text-red-700">
+                                                            <button type="submit" class="text-red-500 hover:text-red-700">
                                                                 Delete
                                                             </button>
                                                         </form>
                                                     </div>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
@@ -78,7 +83,7 @@
                             </table>
                         </div>
                     @else
-                        <p class="text-center text-gray-500">No category found.</p>
+                        <p class="text-center text-gray-500">No users found.</p>
                     @endif
                 </div>
             </div>

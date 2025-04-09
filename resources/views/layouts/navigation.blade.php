@@ -20,6 +20,7 @@
                         {{ __('Posts') }}
                     </x-nav-link>
 
+                    @if(auth()->check() && auth()->user()->hasRole('admin'))
                     <x-nav-link :href="route('roles.index')" :active="request()->routeIs('roles.*')">
                         {{ __('Roles') }}
                     </x-nav-link>
@@ -28,14 +29,18 @@
                         {{ __('Permissions') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('categories.index')" :active="request()->routeIs('permissions.*')">
+                    <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
                         {{ __('Categories') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('tags.index')" :active="request()->routeIs('permissions.*')">
+                    <x-nav-link :href="route('tags.index')" :active="request()->routeIs('tags.*')">
                         {{ __('Tags') }}
                     </x-nav-link>
 
+                    <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                        {{ __('Users') }}
+                    </x-nav-link>
+                    @endif
                 </div>
             </div>
 

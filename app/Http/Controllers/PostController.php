@@ -29,10 +29,16 @@ class PostController extends Controller
     public function index()
     {
 
-        $posts = Post::with('author','categories','tags')
-            ->published()
-            ->latest('published_at')
-            ->paginate(10);
+        if (Auth::user()->hasRole(['admin', 'super_admin', 'editor'])) {
+            // Admin: Show all posts
+            $posts = Post::with('author')->latest()->paginate(10);
+        } else {
+            // Regular User/Author: Show only their own posts
+            $posts = Post::where('user_id', Auth::id())
+                         ->with('author','categories','tags')
+                         ->latest()
+                         ->paginate(10);
+        }
 
         return view('posts.index', compact('posts'));
     }
@@ -66,6 +72,9 @@ class PostController extends Controller
                 'tags' => 'array',
                 'tags.*' => 'exists:tags,id',
             ]);
+
+        //Creating slug
+        $slug = Str::slug($validatedData['title']);
 
         // Sanitize content
         $sanitizedContent = strip_tags($validatedData['content'], '<p><a><strong><em><h1><h2><h3><h4><h5><h6><ul><ol><li>');
