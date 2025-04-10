@@ -1,6 +1,5 @@
 <x-app-layout>
     <x-slot name="header">
-        @if (auth()->user()->hasRole(['admin', 'super_admin', 'editor']))
         <div class="flex items-center justify-between">
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
                 {{ __('Blog Posts') }}
@@ -79,11 +78,15 @@
                                                 @endforeach
                                             </td>
                                             <td class="px-6 py-4">
+                                            @if ($post->tags->count() > 0)
                                                 @foreach ($post->tags as $tag)
                                                     <span class="inline-block px-2 py-1 mb-1 mr-1 text-xs bg-indigo-100 rounded-full text-neutral-800">
                                                         {{ $tag->tag_name }}
                                                     </span>
                                                 @endforeach
+                                            @else
+                                                <span><strong>Tags:</strong> No tags assigned</span>
+                                            @endif
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="text-sm text-gray-500">
@@ -97,22 +100,21 @@
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                                                @if(auth()->id() == $post->user_id)
                                                     <div class="flex justify-end space-x-2">
-                                                        @can('view', $post)
+                                                        @can('view posts')
                                                         <a href="{{ route('posts.show', $post->slug) }}"
                                                            class="text-blue-500 hover:text-blue-700">
                                                             View
                                                         </a>
                                                         @endcan
-                                                        @can('update posts', $post)
+                                                        @can('update posts')
                                                         <a href="{{ route('posts.edit', $post->slug) }}"
                                                            class="text-yellow-500 hover:text-yellow-700">
                                                             Edit
                                                         </a>
                                                         @endcan
-                                                        @can('delete posts', $post)
-                                                        <form action="{{ route('posts.destroy', $post) }}"
+                                                        @can('delete posts')
+                                                        <form action="{{ route('posts.destroy', $post->slug) }}"
                                                               method="POST"
                                                               onsubmit="return confirm('Are you sure you want to delete this post?');"
                                                               class="inline">
@@ -125,7 +127,6 @@
                                                         </form>
                                                         @endcan
                                                     </div>
-                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
@@ -143,5 +144,4 @@
             </div>
         </div>
     </div>
-    @endif
 </x-app-layout>

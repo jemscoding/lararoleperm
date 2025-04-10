@@ -32,7 +32,7 @@ class PostController extends Controller
         if (Auth::user()->hasRole(['admin', 'super_admin', 'editor'])) {
             // Admin: Show all posts
             $posts = Post::with('author')->latest()->paginate(10);
-        } else {
+        } else if (Auth::user()->hasRole(['author', 'user'])){
             // Regular User/Author: Show only their own posts
             $posts = Post::where('user_id', Auth::id())
                          ->with('author','categories','tags')
@@ -67,9 +67,9 @@ class PostController extends Controller
                 'content' => 'required|max:65535',
                 'ft_image' => 'nullable|max:2048|image|mimes:jpeg,png,jpg',
                 'is_published' => 'boolean',
-                'categories' => 'array',
+                'categories' => 'nullable|array',
                 'categories.*' => 'exists:categories,id',
-                'tags' => 'array',
+                'tags' => 'nullable|array',
                 'tags.*' => 'exists:tags,id',
             ]);
 
@@ -173,9 +173,9 @@ class PostController extends Controller
                 'max:2048'
             ],
             'is_published' => 'boolean',
-            'categories' => 'array',
+            'categories' => 'nullable|array',
             'categories.*' => 'exists:categories,id',
-            'tags' => 'array',
+            'tags' => 'nullable|array',
             'tags.*' => 'exists:tags,id'
 
         ]);

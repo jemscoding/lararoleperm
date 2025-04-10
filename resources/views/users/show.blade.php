@@ -4,6 +4,7 @@
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
                 {{ $user->name }}
             </h2>
+    
             @if(auth()->id() == $user->id || auth()->user()->role == 'admin')
                 <div class="flex space-x-2">
                     <a href="{{ route('users.edit', $user->id) }}"

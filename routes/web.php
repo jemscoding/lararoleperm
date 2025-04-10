@@ -39,21 +39,45 @@ Route::resource('/categories', CategoryController::class)->names('categories');
 Route::resource('/tags', TagController::class)->names('tags');
 Route::resource('/users', UserController::class)->names('users');
 
-//route with authentication with a specific role admin, super_admin and editor can access using middleware
-Route::group(['middleware' => ['auth', 'role:admin|super_admin|editor'], 'prefix' => 'admin'], function () {
-    Route::resource('posts', PostController::class)->names('posts');
+// //route with authentication with a specific role admin, super_admin and editor can access using middleware
+// Route::group(['middleware' => ['auth', 'role:admin|super_admin|editor|user|manager|author']], function () {
+//     Route::resource('posts', PostController::class)->names('posts');
+//     Route::resource('roles', RoleController::class)->names('roles');
+//     Route::resource('permissions', PermissionController::class)->names('permissions');
+//     Route::resource('tags', TagController::class)->names('tags');
+// });
+
+// //route for user,author
+// Route::group(['middleware' =>['auth','role:author|user|admin']], function ()
+// {
+//     // Route::resource('posts', PostController::class)->names('posts');
+//     Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
+//     Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
+//     Route::get('/posts/edit', [PostController::class, 'edit'])->name('posts.edit');
+//     Route::get('/posts/delete', [PostController::class, 'delete'])->name('posts.delete');
+//     Route::get('/posts/show/{post:slug}', [PostController::class, 'show'])->name('posts.show');
+//     Route::get('/posts/edit/{post:slug}', [PostController::class, 'edit'])->name('posts.edit');
+// });
+
+// Route with authentication for admin roles
+Route::group(['middleware' => ['auth', 'role:admin|super_admin|editor|manager|author|user']], function () {
+    Route::resource('posts', PostController::class)->names('posts')->parameters(['posts' => 'post:slug']); // Use a different name prefix to avoid conflicts
     Route::resource('roles', RoleController::class)->names('roles');
     Route::resource('permissions', PermissionController::class)->names('permissions');
+    Route::resource('categories', CategoryController::class)->names('categories');
+    Route::resource('tags', TagController::class)->names('tags');
+    Route::resource('users', UserController::class)->names('users');
 });
 
-Route::group(['middleware' =>['auth','role:author|user']], function ()
-{
-    // Route::resource('posts', PostController::class)->names('posts');
-    Route::get('/posts', [PostController::class, 'index'])->name('posts.index')->middleware('role:user|author');
-    Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create')->middleware('role:user|author');
-    Route::get('/posts/edit', [PostController::class, 'edit'])->name('posts.edit')->middleware('role:user|author');
-    Route::get('/posts/delete', [PostController::class, 'delete'])->name('posts.delete')->middleware('role:user|author');
-    Route::get('/posts/{post:slug}', [PostController::class, 'show'])->name('posts.show')->middleware('role:user|author');
-    Route::get('/posts/edit/{post:slug}', [PostController::class, 'edit'])->name('posts.edit')->middleware('role:user|author');
-});
+// // Route for users and authors to view posts
+// Route::group(['middleware' => ['auth', 'role:author|user']], function () {
+//     // Route::resource('posts', PostController::class)->names('posts')->only(['index', 'show']); // Only allow index and show for regular users
+//     // You can add other specific routes for creating, editing, etc., if authors/users are allowed
+//     Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
+//     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
+//     Route::get('/posts/edit/{post:slug}', [PostController::class, 'edit'])->name('posts.edit');
+//     Route::get('/posts/show/{post:slug}', [PostController::class, 'show'])->name('posts.show');
+//     Route::put('/posts/{post:slug}', [PostController::class, 'update'])->name('posts.update');
+//     Route::delete('/posts/{post:slug}', [PostController::class, 'destroy'])->name('posts.destroy');
+// });
 

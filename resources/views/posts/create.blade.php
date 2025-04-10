@@ -32,6 +32,7 @@
                             <x-input-error class="mt-2" :messages="$errors->get('ft_image')" />
                         </div>
 
+                        @can('publish posts')
                         <div class="mb-4">
                             <label class="inline-flex items-center">
                                 <input type="checkbox" name="is_published"
@@ -40,7 +41,8 @@
                                 <span class="ml-2">{{ __('Publish Immediately') }}</span>
                             </label>
                         </div>
-
+                        @endcan
+                        
                         <div>
                             <label class="block mb-2 text-sm font-medium text-gray-700">
                                 Categories
