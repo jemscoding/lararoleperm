@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Validation\ValidationException;
@@ -16,9 +17,19 @@ class UserController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        $users = User::with('roles','permissions')
-        ->paginate(10);
+    {   
+
+        if (Auth::user()->hasPermissionTo('view any users')) {
+            //Show all users
+            $users = User::with('roles','permissions')->latest()->paginate(10);
+        }
+        // } else if (Auth::user()->hasPermissionTo('view posts')){
+        //     // Regular User/Author: Show only their own posts
+        //     $users = User::where('user_id', Auth::id())
+        //                  ->with('roles', 'permissions')
+        //                  ->latest()
+        //                  ->paginate(10);
+        // }
         return view('users.index', compact('users'));
     }
 

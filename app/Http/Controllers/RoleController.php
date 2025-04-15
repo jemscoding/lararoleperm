@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class RoleController extends Controller
 {
@@ -12,7 +13,7 @@ class RoleController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
+    {   
         $roles = Role::with('permissions')->paginate(10);
         $permissions = Permission::all();
         return view('roles.index', compact('roles', 'permissions'));

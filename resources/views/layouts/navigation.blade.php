@@ -10,50 +10,53 @@
                     </a>
                 </div>
 
-                @if(auth()->check() && auth()->user()->hasAnyRole('admin|super_admin|editor'))
-                <!-- Navigation Links Admin -->
+                
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('posts.index')" :active="request()->routeIs('admin.posts.*')">
-                        {{ __('Posts') }}
-                    </x-nav-link>
+                    <!-- Navigation Link Admin & SuperAdmin -->
+                    @if(auth()->check() && auth()->user()->hasAnyRole(['admin', 'super_admin']))
+                        <x-nav-link :href="route('posts.index')" :active="request()->routeIs('admin.posts.*')">
+                            {{ __('Posts') }}
+                        </x-nav-link>
 
-                    <x-nav-link :href="route('roles.index')" :active="request()->routeIs('admin.roles.*')">
-                        {{ __('Roles') }}
-                    </x-nav-link>
+                        <x-nav-link :href="route('roles.index')" :active="request()->routeIs('admin.roles.*')">
+                            {{ __('Roles') }}
+                        </x-nav-link>
 
-                    <x-nav-link :href="route('permissions.index')" :active="request()->routeIs('admin.permissions.*')">
-                        {{ __('Permissions') }}
-                    </x-nav-link>
+                        <x-nav-link :href="route('permissions.index')" :active="request()->routeIs('admin.permissions.*')">
+                            {{ __('Permissions') }}
+                        </x-nav-link>
 
-                    <x-nav-link :href="route('categories.index')" :active="request()->routeIs('admin.categories.*')">
-                        {{ __('Categories') }}
-                    </x-nav-link>
+                        <x-nav-link :href="route('categories.index')" :active="request()->routeIs('admin.categories.*')">
+                            {{ __('Categories') }}
+                        </x-nav-link>
 
-                    <x-nav-link :href="route('tags.index')" :active="request()->routeIs('admin.tags.*')">
-                        {{ __('Tags') }}
-                    </x-nav-link>
+                        <x-nav-link :href="route('tags.index')" :active="request()->routeIs('admin.tags.*')">
+                            {{ __('Tags') }}
+                        </x-nav-link>
 
-                    <x-nav-link :href="route('users.index')" :active="request()->routeIs('admin.users.*')">
-                        {{ __('Users') }}
-                    </x-nav-link>
+                        <x-nav-link :href="route('users.index')" :active="request()->routeIs('admin.users.*')">
+                            {{ __('Users') }}
+                        </x-nav-link>
+                    
+                    <!-- Navigation Link Author, Editor & Manager -->
+                    @elseif(auth()->check() && auth()->user()->hasAnyRole(['author', 'editor', 'manager']))
+                        @can('view posts')
+                        <x-nav-link :href="route('posts.index')" :active="request()->routeIs('admin.posts.*')">
+                            {{ __('Posts') }}
+                        </x-nav-link>
+                        @endcan
+
+                        @can('view users')
+                        <x-nav-link :href="route('users.index')" :active="request()->routeIs('admin.posts.*')">
+                            {{ __('Users') }}
+                        </x-nav-link>
+                        @endcan
+                    @endif
                 </div>
-
-                @elseif (auth()->check() && auth()->user()->hasRole('user'))
-                <!-- Navigation Links User -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('posts.index')" :active="request()->routeIs('posts.*')">
-                        {{ __('Posts') }}
-                    </x-nav-link>
-                </div>
-                @endif
             </div>
 
             <!-- Settings Dropdown -->

@@ -29,10 +29,11 @@ class PostController extends Controller
     public function index()
     {
 
-        if (Auth::user()->hasRole(['admin', 'super_admin', 'editor'])) {
+        $this->authorize('view posts', Post::class);
+        if (Auth::user()->hasPermissionTo('view any posts')) {
             // Admin: Show all posts
             $posts = Post::with('author')->latest()->paginate(10);
-        } else if (Auth::user()->hasRole(['author', 'user'])){
+        } else if (Auth::user()->hasPermissionTo('view posts')){
             // Regular User/Author: Show only their own posts
             $posts = Post::where('user_id', Auth::id())
                          ->with('author','categories','tags')
@@ -211,14 +212,14 @@ class PostController extends Controller
         }
 
         //see if post has tags
-        if ($request->has('tags')) {
-            $post->tags()->sync($request->tags);
-        }
+       
+            $post->tags()->sync($request->tags ?? []);
+        
 
         //see if post has categories
-        if ($request->has('categories')) {
-            $post->categories()->sync($request->categories);
-        }
+       
+            $post->categories()->sync($request->categories ?? []);
+        
 
         $post->save();
 

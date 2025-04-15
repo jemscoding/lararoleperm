@@ -52,7 +52,6 @@
                         </div>
                         @endcan
 
-                        @if ($post->categories->count() > 0)
                         <div>
                             <label class="block mb-2 text-sm font-medium text-gray-700">
                                 Categories
@@ -78,10 +77,7 @@
                             @endforeach
                             </div>
                         </div>
-                        @else
-                            <span><strong>Categories:</strong></span> {{-- Displaying only the label, effectively showing blank after it --}}
-                        @endif
-
+                        
                         <div>
                             <label class="block mb-2 text-sm font-medium text-gray-700">
                                 Tags

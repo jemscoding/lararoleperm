@@ -71,11 +71,15 @@
                                                 <div class="text-sm text-gray-900">{{ $post->author->name }}</div>
                                             </td>
                                             <td class="px-6 py-4">
+                                            @if ($post->categories->count() > 0)
                                                 @foreach ($post->categories as $category)
                                                     <span class="inline-block px-2 py-1 mb-1 mr-1 text-xs bg-blue-100 rounded-full text-blue-800">
                                                         {{ $category->category_name }}
                                                     </span>
                                                 @endforeach
+                                            @else
+                                                <span> No categories assigned</span>
+                                            @endif
                                             </td>
                                             <td class="px-6 py-4">
                                             @if ($post->tags->count() > 0)
@@ -85,7 +89,7 @@
                                                     </span>
                                                 @endforeach
                                             @else
-                                                <span><strong>Tags:</strong> No tags assigned</span>
+                                                <span> No tags assigned</span>
                                             @endif
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
